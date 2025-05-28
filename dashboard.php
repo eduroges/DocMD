@@ -3,7 +3,7 @@ require_once 'auth.php'; // Ensures user is authenticated
 
 // Access session variables
 $user_nome = $_SESSION['user_nome'] ?? 'Usuário';
-$user_email = $_SESSION['user_email'] ?? 'Não disponível';
+$user_email = $_SESSION['user_email'] ?? 'Não disponível'; // Kept for potential future use, though not displayed in this layout
 $user_perfil = $_SESSION['user_perfil'] ?? 'Não disponível';
 
 ?>
@@ -15,185 +15,158 @@ $user_perfil = $_SESSION['user_perfil'] ?? 'Não disponível';
     <title>Dashboard - DocMD</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="admin_style.css"> 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.6/purify.min.js"></script> <!-- DOMPurify Added -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.6/purify.min.js"></script>
+    <!-- Inline styles specific to DocMD components will remain, general layout styles moved to admin_style.css -->
     <style>
-        /* Styles from dashboard.php */
-        body {
-            display: flex;
-            min-height: 100vh;
-            flex-direction: column;
+        /* Styles from DocMD.html (specific to DocMD components) */
+        #docmd-container:root { /* Apply vars to #docmd-container or use specific var names */
+          --docmd-primary-color: #3498db;
+          --docmd-secondary-color: #2c3e50;
+          --docmd-accent-color: #e74c3c;
+          --docmd-light-color: #ecf0f1;
+          --docmd-dark-color: #34495e;
         }
-        .main-content {
-            flex: 1;
-            padding-top: 20px; /* Space for navbar */
-        }
-        .navbar {
-            margin-bottom: 20px;
-        }
-        .user-info {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-        .footer {
-            background-color: #343a40;
-            color: white;
-            padding: 10px 0;
-            text-align: center;
-            margin-top: auto;
-        }
-        /* Styles from DocMD.html */
-        :root {
-          --primary-color: #3498db;
-          --secondary-color: #2c3e50;
-          --accent-color: #e74c3c;
-          --light-color: #ecf0f1;
-          --dark-color: #34495e;
-        }
-        .app-container {
+        #docmd-container .app-container {
           max-width: 900px;
+          margin: 0 auto;
         }
-        .app-header {
+        #docmd-container .app-header {
           text-align: center;
           margin-bottom: 2rem;
           padding-bottom: 1rem;
-          border-bottom: 2px solid var(--primary-color);
+          border-bottom: 2px solid var(--docmd-primary-color, #3498db);
         }
-        .app-title {
-          color: var(--primary-color);
+        #docmd-container .app-title {
+          color: var(--docmd-primary-color, #3498db);
           font-weight: 600;
         }
-        .app-subtitle {
-          color: var(--secondary-color);
+        #docmd-container .app-subtitle {
+          color: var(--docmd-secondary-color, #2c3e50);
           font-size: 1.1rem;
         }
-        .card {
+        #docmd-container .card {
           border-radius: 10px;
           box-shadow: 0 4px 12px rgba(0,0,0,0.1);
           border: none;
+          margin-bottom: 1.5rem;
         }
-        .card-header {
-          background-color: var(--primary-color);
+        #docmd-container .card-header {
+          background-color: var(--docmd-primary-color, #3498db);
           color: white;
           border-radius: 10px 10px 0 0 !important;
           padding: 1rem;
           font-weight: 600;
         }
-        .accordion-item {
+        #docmd-container .accordion-item {
             border-radius: 10px !important;
             border: none;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             margin-bottom: 2rem; 
             overflow: hidden; 
         }
-        .accordion-header {
+        #docmd-container .accordion-header {
              border-radius: 10px 10px 0 0 !important;
         }
-         .accordion-button { 
-            background-color: var(--primary-color);
+        #docmd-container .accordion-button { 
+            background-color: var(--docmd-primary-color, #3498db);
             color: white;
             font-weight: 600;
             padding: 1rem;
          }
-          .accordion-button:not(.collapsed) {
-             background-color: var(--primary-color); 
+        #docmd-container .accordion-button:not(.collapsed) {
+             background-color: var(--docmd-primary-color, #3498db); 
              color: white; 
              box-shadow: none; 
           }
-          .accordion-button:focus {
+        #docmd-container .accordion-button:focus {
               box-shadow: none;
               border-color: rgba(0,0,0,.125);
           }
-           .accordion-button::after {
+        #docmd-container .accordion-button::after {
               background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
            }
-           .accordion-button:not(.collapsed)::after {
+        #docmd-container .accordion-button:not(.collapsed)::after {
                 background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
                 transform: rotate(-180deg);
            }
-           .accordion-body { 
+        #docmd-container .accordion-body { 
                padding: 1.5rem; 
                background-color: white; 
            }
-        .form-label { 
+        #docmd-container .form-label { 
           font-weight: 500; 
-          color: var(--secondary-color); 
+          color: var(--docmd-secondary-color, #2c3e50); 
         }
-        .form-control, .form-select { 
+        #docmd-container .form-control, #docmd-container .form-select { 
           border-radius: 6px; 
           border: 1px solid #ced4da; 
           padding: 0.6rem 0.75rem; 
           transition: all 0.3s; 
         }
-        .form-control:focus, .form-select:focus { 
-          border-color: var(--primary-color); 
+        #docmd-container .form-control:focus, #docmd-container .form-select:focus { 
+          border-color: var(--docmd-primary-color, #3498db); 
           box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25); 
         }
-        /* Re-apply DocMD's specific btn-primary sizing if needed, or use BS5 utilities */
-        /* .btn-primary { 
-          padding: 0.6rem 1.5rem; 
+        #docmd-container .btn-primary {
+          background-color: var(--docmd-primary-color, #3498db); 
+          border-color: var(--docmd-primary-color, #3498db); 
+          padding: 0.6rem 1.5rem;
           font-weight: 500;
-          border-radius: 6px; 
-        } */
-        .btn-primary { /* BS5 btn-primary, with DocMD colors */
-          background-color: var(--primary-color); 
-          border-color: var(--primary-color); 
-          transition: all 0.3s;
+          border-radius: 6px;
         }
-        .btn-primary:hover { 
+        #docmd-container .btn-primary:hover { 
           background-color: #2980b9; 
           border-color: #2980b9; 
         }
-        .btn-secondary { /* BS5 btn-secondary, with DocMD colors */
-          background-color: var(--secondary-color); 
-          border-color: var(--secondary-color); 
+        #docmd-container .btn-secondary { 
+          background-color: var(--docmd-secondary-color, #2c3e50); 
+          border-color: var(--docmd-secondary-color, #2c3e50); 
         }
-        .btn-secondary:hover { 
+        #docmd-container .btn-secondary:hover { 
           background-color: #1a252f; 
           border-color: #1a252f; 
         }
-        #preview { 
+        #docmd-container #preview { 
           border: 1px solid #dee2e6;
           border-radius: 10px;
           padding: 2rem;
           background-color: white;
           min-height: 300px;
         }
-        .hidden { 
+        #docmd-container .hidden { 
           display: none;
         }
-        .info-icon { 
-          color: var(--primary-color);
+        #docmd-container .info-icon { 
+          color: var(--docmd-primary-color, #3498db);
           cursor: pointer;
           margin-left: 0.5rem;
         }
-        .format-badge { 
+        #docmd-container .format-badge { 
           display: inline-block;
           background-color: #e9f7fe;
-          color: var(--primary-color);
+          color: var(--docmd-primary-color, #3498db);
           border-radius: 4px;
           padding: 0.2rem 0.5rem;
           font-size: 0.85rem;
           margin: 0.2rem;
           border: 1px solid #c9e7fe;
         }
-         .format-badge.op-badge {
+        #docmd-container  .format-badge.op-badge {
           background-color: #e8f5e9; 
           color: #2e7d32; 
           border: 1px solid #c8e6c9;
         }
-        .format-example { 
+        #docmd-container .format-example { 
           font-family: monospace;
           background-color: #f8f9fa;
           padding: 0.5rem;
           border-radius: 4px;
           margin: 0.5rem 0;
-          border-left: 3px solid var(--primary-color);
+          border-left: 3px solid var(--docmd-primary-color, #3498db);
         }
-        .file-upload-container { 
+        #docmd-container .file-upload-container { 
           border: 2px dashed #ced4da;
           border-radius: 10px;
           padding: 2rem;
@@ -202,26 +175,26 @@ $user_perfil = $_SESSION['user_perfil'] ?? 'Não disponível';
           transition: all 0.3s;
           cursor: pointer;
         }
-        .file-upload-container:hover { 
-          border-color: var(--primary-color);
+        #docmd-container .file-upload-container:hover { 
+          border-color: var(--docmd-primary-color, #3498db);
           background-color: #e9f7fe;
         }
-        .upload-icon { 
+        #docmd-container .upload-icon { 
           font-size: 2.5rem;
-          color: var(--primary-color);
+          color: var(--docmd-primary-color, #3498db);
           margin-bottom: 1rem;
         }
-        .tooltip-inner { 
+        #docmd-container .tooltip-inner { 
           max-width: 350px; 
         }
-        .placeholder-list { 
+        #docmd-container .placeholder-list { 
           background-color: #f8f9fa;
           border-radius: 8px;
           padding: 1rem;
           margin-top: 1rem;
           border: 1px solid #dee2e6;
         }
-        .placeholder-item { 
+        #docmd-container .placeholder-item { 
           font-family: monospace;
           padding: 0.5rem;
           margin: 0.25rem 0;
@@ -232,81 +205,88 @@ $user_perfil = $_SESSION['user_perfil'] ?? 'Não disponível';
           justify-content: space-between;
           align-items: center;
         }
-        .placeholder-item:hover { 
+        #docmd-container .placeholder-item:hover { 
           background-color: #e9f7fe;
         }
-        .copy-btn { 
+        #docmd-container .copy-btn { 
           background: none;
           border: none;
-          color: var(--primary-color);
+          color: var(--docmd-primary-color, #3498db);
           cursor: pointer;
           padding: 0.25rem 0.5rem;
           border-radius: 4px;
           transition: all 0.2s;
         }
-        .copy-btn:hover { 
-          background-color: var(--primary-color);
+        #docmd-container .copy-btn:hover { 
+          background-color: var(--docmd-primary-color, #3498db);
           color: white;
         }
-        .placeholder-category { 
+        #docmd-container .placeholder-category { 
           font-weight: 600;
           margin-top: 1rem;
           margin-bottom: 0.5rem;
-          color: var(--secondary-color);
+          color: var(--docmd-secondary-color, #2c3e50);
         }
-        .placeholder-modal .modal-header { 
-          background-color: var(--primary-color); 
+        #docmd-container .placeholder-modal .modal-header { 
+          background-color: var(--docmd-primary-color, #3498db); 
           color: white; 
         }
-        .placeholder-modal .modal-body { 
+        #docmd-container .placeholder-modal .modal-body { 
           max-height: 70vh; 
           overflow-y: auto; 
         }
-        .placeholder-tabs .nav-link { 
-          color: var(--secondary-color); 
+        #docmd-container .placeholder-tabs .nav-link { 
+          color: var(--docmd-secondary-color, #2c3e50); 
         }
-        .placeholder-tabs .nav-link.active { 
-          color: var(--primary-color); 
+        #docmd-container .placeholder-tabs .nav-link.active { 
+          color: var(--docmd-primary-color, #3498db); 
           font-weight: 600; 
-          border-bottom: 2px solid var(--primary-color); 
+          border-bottom: 2px solid var(--docmd-primary-color, #3498db); 
         }
+        /* General layout styles that were previously here have been moved to admin_style.css */
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">DocMD Dashboard</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <span class="navbar-text me-3">
-                        Bem-vindo, <?php echo htmlspecialchars($user_nome); ?>!
-                    </span>
-                </li>
-                <?php if ($user_perfil === 'admin'): ?>
-                <li class="nav-item">
-                    <a class="nav-link" href="admin.php"><i class="fas fa-user-shield"></i> Admin</a>
-                </li>
-                <?php endif; ?>
-                <li class="nav-item">
-                    <a class="nav-link" href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
 
-    <div class="container main-content">
-        <div class="user-info">
-            <h4>Suas Informações:</h4>
-            <p><strong>Email:</strong> <?php echo htmlspecialchars($user_email); ?></p>
-            <p><strong>Perfil:</strong> <?php echo htmlspecialchars(ucfirst($user_perfil)); ?></p>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.php">DocMD Painel</a>
         </div>
-        <hr>
-        <h3 class="mt-4 mb-3 text-center">Editor de Documentos (DocMD)</h3>
-        <div id="docmd-container" class="container mt-3">
+        <ul class="nav flex-column sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link sidebar-link active" href="dashboard.php"><i class="fas fa-cogs fa-fw me-2"></i> <span>Gerador</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link sidebar-link" href="#"><i class="fas fa-file-alt fa-fw me-2"></i> <span>Templates</span></a>
+            </li>
+            <?php if ($user_perfil === 'admin'): ?>
+            <li class="nav-item">
+                <a class="nav-link sidebar-link" href="admin.php"><i class="fas fa-users fa-fw me-2"></i> <span>Usuários</span></a>
+            </li>
+            <?php endif; ?>
+            <li class="nav-item">
+                <a class="nav-link sidebar-link" href="#"><i class="fas fa-sliders-h fa-fw me-2"></i> <span>Configurações</span></a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light main-header">
+          <div class="container-fluid">
+            <button class="btn btn-link" id="sidebarToggle" type="button">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="ms-auto">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><span class="navbar-text me-3">Bem-vindo, <?php echo htmlspecialchars($user_nome); ?>!</span></li>
+                    <li class="nav-item"><a class="nav-link" href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Main DocMD application content, previously in #docmd-container, now directly in main-content-wrapper -->
+        <div id="docmd-container" class="container mt-3"> <!-- This container might be redundant if app-container handles width -->
              <div class="app-container"> 
                 <header class="app-header">
                   <h1 class="app-title">Gerador de Documentos Markdown Avançado</h1>
@@ -426,7 +406,7 @@ $user_perfil = $_SESSION['user_perfil'] ?? 'Não disponível';
         </div> 
     </div>
 
-    <footer class="footer">
+    <footer class="footer bg-dark text-white text-center py-3"> <!-- Adjusted footer to match admin_style.css if needed -->
         <div class="container">
             <span>&copy; <?php echo date("Y"); ?> DocMD - Todos os direitos reservados.</span>
         </div>
@@ -435,8 +415,16 @@ $user_perfil = $_SESSION['user_perfil'] ?? 'Não disponível';
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-    // DocMD Main Script (Adapted & with DOMPurify)
+    // Sidebar Toggle JavaScript
     document.addEventListener('DOMContentLoaded', function() {
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                document.body.classList.toggle('sidebar-toggled');
+            });
+        }
+
+      // DocMD Main Script (Adapted & with DOMPurify)
       const initializeTooltips = () => {
         const existingTooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
         existingTooltips.forEach(el => {
@@ -494,11 +482,11 @@ $user_perfil = $_SESSION['user_perfil'] ?? 'Não disponível';
         const unidades = ['', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove', 'dez', 'onze', 'doze', 'treze', 'quatorze', 'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove'];
         const dezenas = ['', '', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
         const centenas = ['', 'cento', 'duzentos', 'trezentos', 'quatrocentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos'];
-        // Simplified for brevity for this example - full function is long
         if (numero === 0) return 'zero reais';
         let numStr = parseFloat(numero).toFixed(2);
         let [inteiro, decimal] = numStr.split('.');
         inteiro = parseInt(inteiro); decimal = parseInt(decimal);
+        // Simplified for brevity, full logic would be more complex
         let resultado = (inteiro === 1 ? 'um real' : `${unidades[inteiro] || inteiro} reais`);
         if (decimal > 0) {
             resultado += ` e ${unidades[decimal] || decimal} centavos`;
@@ -665,10 +653,9 @@ $user_perfil = $_SESSION['user_perfil'] ?? 'Não disponível';
         });
     }
     function printDocument(html, font, size) { 
-        // Assuming html passed here is already sanitized by the caller (preview.innerHTML)
-        const cleanHtmlForPrint = DOMPurify.sanitize(html); // Sanitize again for safety, if direct calls are possible
+        const cleanHtmlForPrint = DOMPurify.sanitize(html); // Sanitize again for safety
         const printWindow = window.open('', '', 'width=800,height=600');
-        printWindow.document.write(`<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8"><title>Imprimir</title><style>body{font-family:${font};font-size:${size};line-height:1.6;padding:40px;max-width:800px;margin:0 auto;} @media print{body{padding:0;margin:0;} p,h1,h2,h3,h4,h5,h6,li,blockquote{page-break-inside:avoid;} h1,h2,h3,h4,h5,h6{page-break-before:auto;page-break-after:avoid;}}</style></head><body>${cleanHtmlForPrint}</body></html>`); // Use sanitized HTML
+        printWindow.document.write(`<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8"><title>Imprimir</title><style>body{font-family:${font};font-size:${size};line-height:1.6;padding:40px;max-width:800px;margin:0 auto;} @media print{body{padding:0;margin:0;} p,h1,h2,h3,h4,h5,h6,li,blockquote{page-break-inside:avoid;} h1,h2,h3,h4,h5,h6{page-break-before:auto;page-break-after:avoid;}}</style></head><body>${cleanHtmlForPrint}</body></html>`); 
         printWindow.document.close(); 
         setTimeout(() => { try { printWindow.focus(); printWindow.print(); } catch (e) { alert("Erro imprimir."); } }, 500);
     }
@@ -721,3 +708,5 @@ $user_perfil = $_SESSION['user_perfil'] ?? 'Não disponível';
     </script>
 </body>
 </html>
+
+[end of dashboard.php]

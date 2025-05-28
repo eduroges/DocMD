@@ -1,0 +1,183 @@
+/* AdminLTE-inspired Layout CSS */
+
+:root {
+    --sidebar-width: 250px;
+    --sidebar-bg-color: #343a40; /* Dark gray, similar to AdminLTE */
+    --sidebar-text-color: #c2c7d0;
+    --sidebar-link-hover-bg: #495057;
+    --sidebar-link-active-bg: #007bff; /* Bootstrap primary blue for active */
+    --content-bg-color: #f4f6f9; /* Light gray for main content area */
+}
+
+body {
+    background-color: var(--content-bg-color);
+    display: flex;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: var(--sidebar-bg-color);
+    color: var(--sidebar-text-color);
+    padding-top: 1rem; /* Space for logo or header */
+    overflow-y: auto; /* Scrollable sidebar if content is long */
+    z-index: 1030; /* Ensure sidebar is above most content, but below modals if any */
+    transition: margin-left 0.3s ease, width 0.3s ease; /* Added margin-left to transition for toggling */
+}
+
+.sidebar-header {
+    padding: 0.8rem 1rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #4f5962;
+}
+
+.sidebar-header a {
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.sidebar-nav {
+    list-style: none;
+    padding-left: 0;
+}
+
+.sidebar-nav .nav-item {
+    margin-bottom: 0.25rem;
+}
+
+.sidebar-nav .nav-link {
+    color: var(--sidebar-text-color);
+    padding: 0.75rem 1rem;
+    display: block;
+    text-decoration: none;
+    border-radius: 0.25rem; /* Subtle rounding for links */
+    margin: 0 0.5rem; /* Add some horizontal margin */
+}
+
+.sidebar-nav .nav-link:hover {
+    background-color: var(--sidebar-link-hover-bg);
+    color: #fff;
+}
+
+.sidebar-nav .nav-link.active {
+    background-color: var(--sidebar-link-active-bg);
+    color: #fff;
+    font-weight: 500;
+}
+
+.sidebar-nav .nav-link .fa-fw { /* Font Awesome fixed width icon */
+    margin-right: 0.5rem;
+}
+
+.main-content-wrapper {
+    margin-left: var(--sidebar-width);
+    padding: 1.5rem; /* Default padding */
+    flex-grow: 1; /* Takes remaining space */
+    width: calc(100% - var(--sidebar-width)); /* Ensure it doesn't overflow due to padding */
+    transition: margin-left 0.3s ease, width 0.3s ease; /* Added width to transition */
+}
+
+/* Basic Responsive Considerations */
+@media (max-width: 991.98px) { /* Bootstrap's lg breakpoint */
+     .sidebar {
+        margin-left: calc(-1 * var(--sidebar-width)); /* Hide it off-screen */
+    }
+    .main-content-wrapper {
+        margin-left: 0;
+        width: 100%;
+    }
+    body.sidebar-toggled .sidebar { /* This class would be toggled by JS */
+        margin-left: 0;
+    }
+    /* When sidebar is toggled on small screens, push content */
+    body.sidebar-toggled .main-content-wrapper {
+      margin-left: var(--sidebar-width);
+      /* width: calc(100% - var(--sidebar-width)); */ /* Recalculating width might not be needed if sidebar overlays */
+    }
+}
+
+/* Scrollbar styling for webkit browsers (optional) */
+.sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+.sidebar::-webkit-scrollbar-track {
+    background: var(--sidebar-bg-color);
+}
+.sidebar::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
+}
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: #666;
+}
+
+/* Footer specific style */
+.footer {
+    background-color: #343a40; /* Standard dark footer */
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+    /* margin-top: auto; /* This might be needed if main content isn't always full height */
+}
+
+/* Ensure fixed navbar button is clickable */
+.main-header .btn-link {
+    z-index: 1031; /* Higher than .main-header.navbar if it's part of it or overlaps */
+}
+
+/* === Fixed Top Navbar and Content Padding (Consolidated) === */
+.main-content-wrapper {
+     padding-top: 70px; /* Standardized to 70px for navbar height + buffer */
+}
+.main-header.navbar {
+    position: fixed; 
+    top: 0;
+    /* left: var(--sidebar-width);  Initial state handled by body:not(.sidebar-toggled) */
+    /* width: calc(100% - var(--sidebar-width)); */
+    z-index: 1020; /* Slightly lower than sidebar if sidebar needs to overlap, but higher than normal content */
+    transition: left 0.3s ease, width 0.3s ease;
+}
+
+/* Default state: sidebar is visible on larger screens */
+body:not(.sidebar-toggled) .main-header.navbar {
+    left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+}
+
+/* Sidebar hidden by default on smaller screens, or when toggled on larger screens */
+body.sidebar-toggled .main-header.navbar {
+    left: 0; /* Sidebar is hidden or collapsed */
+    width: 100%;
+}
+
+@media (max-width: 991.98px) {
+    /* Sidebar is hidden by default, so header is full width */
+    body:not(.sidebar-toggled) .main-header.navbar {
+        left: 0;
+        width: 100%;
+    }
+    /* When sidebar is toggled open on small screens, header adjusts */
+    body.sidebar-toggled .main-header.navbar {
+        left: var(--sidebar-width); 
+        width: calc(100% - var(--sidebar-width));
+    }
+}
+```
+The responsive logic for `.main-header.navbar` needed slight adjustment to correctly work with `.sidebar-toggled` and the default states for different screen sizes.
+
+**Step 4 & 5: Clean Up `dashboard.php` and `admin.php`**
+I will now remove the duplicated CSS from `dashboard.php` and `admin.php`.
+
+For `dashboard.php`:
+The specific DocMD styles (scoped with `#docmd-container`) will remain. The general layout styles (for `.main-content-wrapper` and `.main-header.navbar`) will be removed.
+
+For `admin.php`:
+The admin-specific styles (e.g., `.action-buttons`) will remain. The general layout styles will be removed.

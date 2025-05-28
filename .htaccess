@@ -1,0 +1,15 @@
+# Disable directory browsing
+Options -Indexes
+
+# Deny access to sensitive files
+<Files config.php>
+    Require all denied
+</Files>
+<Files create_users_table.sql>
+    Require all denied
+</Files>
+
+# Optional: Deny access to .htaccess itself
+<Files .htaccess>
+    Require all denied
+</Files>
